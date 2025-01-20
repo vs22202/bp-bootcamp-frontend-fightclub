@@ -7,6 +7,7 @@ function Sprite() {
   this.character = "ronan";
   this.action = "idle";
   this.currentSpriteIndex = 0;
+  this.flipImage = false;
   this.getCurrentSprite = () => {
     return spriteState[this.character][this.action].spriteAssets[
       this.currentSpriteIndex
@@ -17,7 +18,16 @@ function Sprite() {
       this.currentSpriteIndex =
         (this.currentSpriteIndex + 1) %
         spriteState[this.character][this.action].spriteAssets.length;
-    else {
+    else if (this.action == "dead") {
+      this.currentSpriteIndex = this.currentSpriteIndex + 1;
+      if (
+        this.currentSpriteIndex >=
+        spriteState[this.character][this.action].spriteAssets.length
+      ) {
+        this.currentSpriteIndex =
+          spriteState[this.character][this.action].spriteAssets.length - 1;
+      }
+    } else {
       this.currentSpriteIndex = this.currentSpriteIndex + 1;
       if (
         this.currentSpriteIndex >=
@@ -40,4 +50,5 @@ function Player() {
   this.position = new Position();
   this.currentSprite = new Sprite();
   this.isFalling = false;
+  this.canAttack = false;
 }
