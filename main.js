@@ -29,69 +29,47 @@ const loadAllImageAssets = async () => {
   return Promise.all(assetPromises);
 };
 
-const movePlayer = (playerIndex, direction) => {
-  console.log(direction, playerIndex);
-  switch (direction) {
-    case "left":
-      gameState.players[playerIndex].position.x -=
-        gameState.players[playerIndex].speed;
-      if (gameState.players[playerIndex].position.x < 0)
-        gameState.players[playerIndex].position.x = 0;
-      break;
-    case "right":
-      gameState.players[playerIndex].position.x +=
-        gameState.players[playerIndex].speed;
-      if (gameState.players[playerIndex].position.x > canvasState.width - 200)
-        gameState.players[playerIndex].position.x = canvasState.width - 200;
-      break;
-    case "up":
-      if (
-        gameState.players[playerIndex].isFalling &&
-        gameState.players[playerIndex].position.y === canvasState.baseLine - 200
-      ) {
-        gameState.players[playerIndex].isFalling = false;
-      }
-      if (
-        gameState.players[playerIndex].position.y >
-          canvasState.height / 2 - 100 &&
-        !gameState.players[playerIndex].isFalling
-      )
-        gameState.players[playerIndex].position.y -=
-          gameState.players[playerIndex].speed *
-          gameState.players[playerIndex].jumpMultiplier;
-      else gameState.players[playerIndex].isFalling = true;
-      break;
-    case "down":
-      gameState.players[playerIndex].position.y +=
-        gameState.players[playerIndex].speed *
-        gameState.players[playerIndex].jumpMultiplier;
-      if (
-        gameState.players[playerIndex].position.y >
-        canvasState.baseLine - 200
-      )
-        gameState.players[playerIndex].position.y = canvasState.baseLine - 200;
-      break;
+const drawBoundingBox = (ctx, player) => {
+  ctx.beginPath();
+  const {x,y,width,height} = player.getBoundingBox();
+  ctx.rect(x, y, width, height);
+  ctx.stroke();
+};
+
+const checkPlayerCollision = () => {
+
+  const width = gameState.players[0].getBoundingBox().width;
+  const height = gameState.players[0].getBoundingBox().height;
+  if (
+    Math.abs(
+      gameState.players[0].getBoundingBox().x - gameState.players[1].getBoundingBox().x
+    ) < width 
+  ) {
+    if (
+      Math.abs(
+        gameState.players[0].getBoundingBox().y - gameState.players[1].getBoundingBox().y
+      ) < height 
+    ) {
+      return true;
+    }
   }
 };
 
-const attackPlayer = (playerIndex, attackType) => {
-  if (gameState.players[playerIndex].canAttack) {
-    const oppositePlayerIndex = Number(!playerIndex);
-    if (gameState.players[oppositePlayerIndex].playerHP > 0) {
-      gameState.players[oppositePlayerIndex].playerHP -= 10;
+const checkPlayerAttack = () => {
+  const width = gameState.players[0].getBoundingBox().width;
+  const height = gameState.players[0].getBoundingBox().height;
+  if (
+    Math.abs(
+      gameState.players[0].getBoundingBox().x - gameState.players[1].getBoundingBox().x
+    ) < width + 20 
+  ) {
+    if (
+      Math.abs(
+        gameState.players[0].getBoundingBox().y - gameState.players[1].getBoundingBox().y
+      ) < height + 20 
+    ) {
+      return true;
     }
-    if (gameState.players[oppositePlayerIndex].playerHP <= 0) {
-      setTimeout(() => {
-        gameState.players[oppositePlayerIndex].currentSprite.action = "dead";
-      }, 200);
-      setTimeout(() => {
-        gameState.isGameOver = true;
-      }, 200);
-    }
-  }
-  if (gameState.players[playerIndex].currentSprite.action !== attackType) {
-    gameState.players[playerIndex].currentSprite.action = attackType;
-    gameState.players[playerIndex].currentSprite.currentSpriteIndex = 0;
   }
 };
 
@@ -100,11 +78,11 @@ const handleKeyboardInput = () => {
     if (keyboardState[key]) {
       if (player2ControlsList.includes(key)) {
         if (key == "q") {
-          attackPlayer(1, "attack1");
-        } else movePlayer(1, mapControlToDirection[key]);
+          gameState.players[1].attackPlayer("attack1", gameState.players[0]);
+        } else gameState.players[1].movePlayer(mapControlToDirection[key]);
       } else if (key == " ") {
-        attackPlayer(0, "attack1");
-      } else movePlayer(0, mapControlToDirection[key]);
+        gameState.players[0].attackPlayer("attack1", gameState.players[1]);
+      } else gameState.players[0].movePlayer(mapControlToDirection[key]);
     }
   }
 };
@@ -141,16 +119,6 @@ const drawPlayer = (playerIndex) => {
     );
 };
 
-const checkPlayerCollision = () => {
-  if (
-    Math.abs(
-      gameState.players[0].position.x - gameState.players[1].position.x
-    ) < 100
-  ) {
-    gameState.players[0].canAttack = true;
-    gameState.players[1].canAttack = true;
-  }
-};
 const setupGameStage = (ctx) => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(
@@ -162,7 +130,6 @@ const setupGameStage = (ctx) => {
   );
   ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
   ctx.fillRect(0, canvasState.baseLine, canvasState.width, 10);
-  console.log(gameState, "hero");
   handleKeyboardInput();
 
   //check which playerSprite Should be flipped
@@ -173,7 +140,13 @@ const setupGameStage = (ctx) => {
     !gameState.players[0].currentSprite.flipImage;
 
   // check collision
-  checkPlayerCollision();
+  if (checkPlayerAttack()) {
+    gameState.players[0].canAttack = true;
+    gameState.players[1].canAttack = true;
+  } else {
+    gameState.players[0].canAttack = false;
+    gameState.players[1].canAttack = false;
+  }
   // console.log(
   //   canvasState.width,
   //   gameState.players[0].position.x,
@@ -190,6 +163,8 @@ const setupGameStage = (ctx) => {
 
   drawPlayer(0);
   drawPlayer(1);
+  drawBoundingBox(ctx, gameState.players[0]);
+  drawBoundingBox(ctx, gameState.players[1]);
 
   if (canvasState.currentFrame % 10 == 0) {
     gameState.players[0].currentSprite.incrementSprite();
@@ -197,15 +172,8 @@ const setupGameStage = (ctx) => {
   }
   canvasState.currentFrame = (canvasState.currentFrame + 1) % 60;
   // Handle gravity
-  gameState.players[0].position.y +=
-    gameState.players[0].speed * gameState.players[0].gravityMultiplier;
-  if (gameState.players[0].position.y > canvasState.baseLine - 200)
-    gameState.players[0].position.y = canvasState.baseLine - 200;
-
-  gameState.players[1].position.y +=
-    gameState.players[1].speed * gameState.players[1].gravityMultiplier;
-  if (gameState.players[1].position.y > canvasState.baseLine - 200)
-    gameState.players[1].position.y = canvasState.baseLine - 200;
+  gameState.players[0].movePlayer("gravity");
+  gameState.players[1].movePlayer("gravity");
 };
 
 const gameLoop = (ctx) => {
