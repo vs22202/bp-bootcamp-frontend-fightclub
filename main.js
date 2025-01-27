@@ -1,4 +1,5 @@
 
+/* */
 // Image assets laoder
 const loadAllImageAssets = async () => {
   const assetPromises = [];
@@ -117,7 +118,7 @@ const handleGameOver = () => {
   drawGameStateText("Game Over");
   setTimeout(() => {
     drawGameStateText("Restarting Now....");
-    location.reload();
+    gameState.resetGameState();
   }, 2000);
 };
 

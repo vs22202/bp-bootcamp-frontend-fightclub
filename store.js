@@ -98,6 +98,22 @@ let gameState = {
           "assets/game_objects/buttons/play_button.png";
     });
   },
+  resetGameState: () => {
+    gameState.players = [new Player(), new Player()];
+    gameState.isGameStarted = false;
+    gameState.isGamePaused = false;
+    gameState.isGameOver = false;
+    gameState.isPlayerTwoNPC = false;
+    gameState.gameObjects.playButton.asset.style.display = "block";
+    gameState.gameObjects.pauseButton.asset.style.display = "none";
+    gameState.players[0].position.x = canvasState.width / 2;
+    gameState.players[0].position.y = canvasState.baseLine - 100;
+
+    gameState.players[1].position.x = canvasState.width / 2 + 200;
+    gameState.players[1].position.y = canvasState.baseLine - 100;
+    gameState.players[1].currentSprite.character = "windNinja";
+    gameState.players[1].currentSprite.flipImage = true;
+  },
 };
 
 gameState.players[0].position.x = canvasState.width / 2;
