@@ -1,5 +1,5 @@
 # Steps to open game
-You can open the html file in any browser - no need for any other steps
+Clone the project and open the `index.html` file in any browser - no need for any other steps
 
 It is also deployed and available at - [FightClub](https://bp-bootcamp-fight-club.web.app/)
 
