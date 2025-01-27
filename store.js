@@ -1,3 +1,15 @@
+/* 
+  Author : Vishaal Sowrirajan
+
+  Overview of file 
+  1. Setup canvas
+  2. Setup sprite assets
+  3. Setup game state
+  4. Setup keyboard input
+
+*/
+
+// Setup canvas
 const canvas = document.createElement("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -14,6 +26,7 @@ const canvasState = {
   baseLine: canvas.height - 70,
 };
 
+// Contains the sprite assets for the characters
 const spriteState = {
   ronan: {
     idle: {
@@ -63,6 +76,7 @@ const spriteState = {
   },
 };
 
+// Game state - manages all state related to gameplay
 let gameState = {
   players: [new Player(), new Player()],
   isGameStarted: false,
@@ -124,6 +138,9 @@ gameState.players[1].position.y = canvasState.baseLine - 100;
 gameState.players[1].currentSprite.character = "windNinja";
 gameState.players[1].currentSprite.flipImage = true;
 
+// Handles all keyboard input and triggers the respective actions
+
+// Some constants for tirggering the right action based on some keys
 const player2ControlsList = ["w", "a", "s", "d", "q"];
 const mapControlToDirection = {
   ArrowLeft: "left",

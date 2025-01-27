@@ -1,3 +1,4 @@
+/* Modern CSS Reset */
 /* 1. Use a more-intuitive box-sizing model */
 *,
 *::before,
@@ -67,7 +68,9 @@ h6 {
   isolation: isolate;
 }
 
-/* Styles for game */
+/* End of CSS reset */
+
+/* Styling for game */
 
 #UI {
   position: absolute;

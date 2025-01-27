@@ -1,5 +1,36 @@
 
-/* */
+/* 
+  Author : Vishaal Sowrirajan
+
+  Game Description : This is a fighting game where two players can fight each other.
+
+  Player 1 Controls : arrow keys for movement and space for attack
+
+  Player 2 Controls : wasd for movement and q for attack
+
+  The game has 3 states :
+    1. Start Screen : This is the screen that is displayed when the game is not started
+    2. Game Screen : This is the screen where the game is played
+    3. Game Over Screen : This is the screen that is displayed when the game is over
+
+  Core features of the game:
+    1. Player movement and attack
+    2. Player health bar
+    3. Player sprite animation
+    4. Player attack range detection
+    5. Player gravity
+    6. Player Collision Detection
+    7. Game pause and restart
+
+    Overview of file :
+    1. Image assets loader
+    2. Keyboard events handler
+    3. Screen setup
+    4. Game state handlers
+    5. Game loop
+
+*/
+
 // Image assets laoder
 const loadAllImageAssets = async () => {
   const assetPromises = [];

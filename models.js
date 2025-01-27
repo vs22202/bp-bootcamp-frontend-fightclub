@@ -1,3 +1,14 @@
+/* 
+  Author : Vishaal Sowrirajan
+
+  Overview of file:
+  1. Position Model : This model is used to store x and y coordinates
+  2. SpriteSize Model : This model is used to store width and height of a sprite
+  3. Sprite Model : This model is used to store the current sprite of a player and perform actions on it
+  4. Player Model : This model is used to store player details and perform actions on it
+  5. GameObject Model : This model is used to store game object details
+
+*/
 function Position() {
   this.x = 0;
   this.y = 0;
