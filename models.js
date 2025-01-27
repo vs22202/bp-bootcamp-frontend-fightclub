@@ -57,6 +57,7 @@ function Player() {
   this.currentSprite = new Sprite();
   this.isFalling = false;
   this.isRising = false;
+  this.isTakingDamage = false;
   this.canAttack = false;
   this.boundingBoxOffsets = {
     xOffset: this.currentSprite.spriteSize.width / 2.7,
@@ -132,6 +133,9 @@ function Player() {
         console.log(playerToBeAttacked.playerHP, "hero33");
         if (playerToBeAttacked.playerHP > 0) {
           playerToBeAttacked.playerHP -= 10;
+
+          setTimeout(()=>{playerToBeAttacked.isTakingDamage = true},300);
+          setTimeout(()=>{playerToBeAttacked.isTakingDamage = false},800);
         }
         console.log(playerToBeAttacked.playerHP, "hero333");
         if (playerToBeAttacked.playerHP <= 0) {
@@ -142,4 +146,9 @@ function Player() {
       }
     }
   };
+}
+
+function GameObject(){
+  this.position = new Position();
+  this.asset = new Image();
 }

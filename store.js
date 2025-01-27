@@ -11,7 +11,7 @@ const canvasState = {
   backgroundImage: new Image(),
   fps: 60,
   currentFrame: 0,
-  baseLine: canvas.height - 100,
+  baseLine: canvas.height - 70,
 };
 
 const spriteState = {
@@ -64,11 +64,19 @@ const spriteState = {
 
 };
 
+
 let gameState = {
   players: [new Player(), new Player()],
+  isGameStarted: false,
   isGamePaused: false,
   isGameOver: false,
   isPlayerTwoNPC: true,
+  gameObjects: {
+    healthBar: new GameObject(),
+    playButton: new GameObject(),
+    homeButton: new GameObject(),
+    pauseButton: new GameObject(),
+  }
 };
 
 gameState.players[0].position.x = canvasState.width / 2;
