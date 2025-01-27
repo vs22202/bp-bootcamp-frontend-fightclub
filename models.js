@@ -59,10 +59,12 @@ function Player() {
   this.isRising = false;
   this.isTakingDamage = false;
   this.canAttack = false;
+  this.attackRange = 60;
   this.boundingBoxOffsets = {
     xOffset: this.currentSprite.spriteSize.width / 2.7,
     yOffset: this.currentSprite.spriteSize.height / 20,
   };
+
   this.getBoundingBox = () => {
     return {
       x: this.position.x + this.boundingBoxOffsets.xOffset,
@@ -74,7 +76,42 @@ function Player() {
         this.currentSprite.spriteSize.height - this.boundingBoxOffsets.yOffset,
     };
   };
-  this.movePlayer = (direction) => {
+
+  this.checkPlayerCollision = (otherPlayer) => {
+    const width = this.getBoundingBox().width;
+    const height = this.getBoundingBox().height;
+    if (
+      Math.abs(this.getBoundingBox().x - otherPlayer.getBoundingBox().x) < width
+    ) {
+      if (
+        Math.abs(this.getBoundingBox().y - otherPlayer.getBoundingBox().y) <
+        height
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  this.checkPlayerAttack = (enemyPlayer) => {
+    const width = this.getBoundingBox().width;
+    const height = this.getBoundingBox().height;
+    if (
+      Math.abs(this.getBoundingBox().x - enemyPlayer.getBoundingBox().x) <
+      width + this.attackRange
+    ) {
+      if (
+        Math.abs(this.getBoundingBox().y - enemyPlayer.getBoundingBox().y) <
+        height + this.attackRange
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  this.movePlayer = (direction, otherPlayer) => {
     const oldPos = new Position();
     oldPos.x = this.position.x;
     oldPos.y = this.position.y;
@@ -116,7 +153,7 @@ function Player() {
         break;
     }
 
-    if (checkPlayerCollision()) {
+    if (this.checkPlayerCollision(otherPlayer)) {
       this.position.x = oldPos.x;
       this.position.y = oldPos.y;
     }
@@ -124,7 +161,7 @@ function Player() {
   };
 
   this.attackPlayer = (attackType, playerToBeAttacked) => {
-    console.log(playerToBeAttacked.playerHP,"hero22")
+    console.log(playerToBeAttacked.playerHP, "hero22");
     if (this.currentSprite.action !== attackType) {
       this.currentSprite.action = attackType;
       this.currentSprite.currentSpriteIndex = 0;
@@ -134,8 +171,12 @@ function Player() {
         if (playerToBeAttacked.playerHP > 0) {
           playerToBeAttacked.playerHP -= 10;
 
-          setTimeout(()=>{playerToBeAttacked.isTakingDamage = true},300);
-          setTimeout(()=>{playerToBeAttacked.isTakingDamage = false},800);
+          setTimeout(() => {
+            playerToBeAttacked.isTakingDamage = true;
+          }, 300);
+          setTimeout(() => {
+            playerToBeAttacked.isTakingDamage = false;
+          }, 800);
         }
         console.log(playerToBeAttacked.playerHP, "hero333");
         if (playerToBeAttacked.playerHP <= 0) {
@@ -148,7 +189,7 @@ function Player() {
   };
 }
 
-function GameObject(){
+function GameObject() {
   this.position = new Position();
   this.asset = new Image();
 }
