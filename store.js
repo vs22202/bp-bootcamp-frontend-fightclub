@@ -83,6 +83,8 @@ let gameState = {
   isGamePaused: false,
   isGameOver: false,
   isPlayerTwoNPC: false,
+  isOnlineMultiplayer: true,
+  defaultPlayerIndex: 0,
   gameObjects: {
     healthBar: new GameObject(),
     playButton: new GameObject(),
@@ -142,6 +144,13 @@ gameState.players[1].currentSprite.flipImage = true;
 
 // Some constants for tirggering the right action based on some keys
 const player2ControlsList = ["w", "a", "s", "d", "q"];
+const player1ControlsList = [
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowUp",
+  "ArrowDown",
+  " ",
+];
 const mapControlToDirection = {
   ArrowLeft: "left",
   ArrowRight: "right",
@@ -167,21 +176,38 @@ const keyboardState = {
   handleKeyboardInput: () => {
     for (let key in keyboardState) {
       if (keyboardState[key]) {
-        if (player2ControlsList.includes(key)) {
+        if (key == " ") {
+          gameState.players[0].attackPlayer("attack1", gameState.players[1]);
+        }
+        const defaultPlayerIndex = gameState.isOnlineMultiplayer ? gameState.defaultPlayerIndex : 0;
+        const opposingPlayerIndex = defaultPlayerIndex == 0 ? 1 : 0;
+        for (let i = 0; i < player1ControlsList.length - 1; i++) {
+          if (player1ControlsList[i] == key) {
+            gameState.players[defaultPlayerIndex].movePlayer(
+              mapControlToDirection[key],
+              gameState.players[opposingPlayerIndex]
+            );
+            if(gameState.isOnlineMultiplayer){
+              sendMessage(key);
+            }
+            break;
+          }
+        }
+
+        if (!gameState.isOnlineMultiplayer) {
           if (key == "q") {
             gameState.players[1].attackPlayer("attack1", gameState.players[0]);
-          } else
-            gameState.players[1].movePlayer(
-              mapControlToDirection[key],
-              gameState.players[0]
-            );
-        } else if (key == " ") {
-          gameState.players[0].attackPlayer("attack1", gameState.players[1]);
-        } else
-          gameState.players[0].movePlayer(
-            mapControlToDirection[key],
-            gameState.players[1]
-          );
+          }
+          for (let i = 0; i < player2ControlsList.length - 1; i++) {
+            if (player2ControlsList[i] == key) {
+              gameState.players[1].movePlayer(
+                mapControlToDirection[key],
+                gameState.players[0]
+              );
+              break;
+            }
+          }
+        }
       }
     }
   },

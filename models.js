@@ -168,17 +168,14 @@ function Player() {
       this.position.x = oldPos.x;
       this.position.y = oldPos.y;
     }
-    console.log(this.isFalling, "hero11");
   };
 
   this.attackPlayer = (attackType, playerToBeAttacked) => {
-    console.log(playerToBeAttacked.playerHP, "hero22");
     if (this.currentSprite.action !== attackType) {
       this.currentSprite.action = attackType;
       this.currentSprite.currentSpriteIndex = 0;
 
       if (this.canAttack) {
-        console.log(playerToBeAttacked.playerHP, "hero33");
         if (playerToBeAttacked.playerHP > 0) {
           playerToBeAttacked.playerHP -= 10;
 
@@ -189,7 +186,6 @@ function Player() {
             playerToBeAttacked.isTakingDamage = false;
           }, 800);
         }
-        console.log(playerToBeAttacked.playerHP, "hero333");
         if (playerToBeAttacked.playerHP <= 0) {
           setTimeout(() => {
             playerToBeAttacked.currentSprite.action = "dead";
