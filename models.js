@@ -9,6 +9,7 @@
   5. GameObject Model : This model is used to store game object details
 
 */
+
 function Position() {
   this.x = 0;
   this.y = 0;
@@ -196,6 +197,97 @@ function Player() {
   };
 }
 
+function User() {
+  this.name = "";
+  this.id = sessionStorage.getItem("player_id") || "";
+  this.isLoggedIn = !!sessionStorage.getItem("player_id");
+
+  this.registerUser = async (username, password) => {
+    const res = await fetch(`${config.BACKEND_REST_API_URL}/registerPlayer`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        player_name: username,
+        player_password: password,
+      }),
+    });
+
+    if (res.ok) {
+      return true;
+    }
+    alert("Registration has failed, please try again after sometime");
+    return false;
+  };
+  this.loginUser = async (username, password) => {
+    const res = await fetch(`${config.BACKEND_REST_API_URL}/loginPlayer`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        player_name: username,
+        player_password: password,
+      }),
+    });
+
+    if (res.ok) {
+      const result = await res.json();
+      sessionStorage.setItem("player_id", result.player_id);
+      this.name = result.player_name;
+      this.id = result.player_id;
+      this.isLoggedIn = true;
+      sendId(result.player_id);
+      return true;
+    }
+    alert("Login has failed, please retry in sometime");
+    return false;
+  };
+
+  this.logoutUser = () => {
+    this.id = "";
+    sessionStorage.clear("player_id");
+    this.isLoggedIn = false;
+  };
+  this.matchWithRandomPlayer = async () => {
+    const body = { player_id: this.id };
+
+    const res = await fetch(
+      `${config.BACKEND_REST_API_URL}/matchWithRandomPlayer`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    if (res.ok) {
+      return true;
+    }
+    alert("Matching with a random player has failed, please try again later");
+    return false;
+  };
+  this.matchWithPlayer = async (opponent_username) => {
+    const body = [{ player_id: this.id }, { player_name: opponent_username }];
+
+    const res = await fetch(`${config.BACKEND_REST_API_URL}/matchWithPlayer`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.ok) {
+      return true;
+    }
+    alert("Matching with player has failed, please try again later");
+    return false;
+  };
+}
 function GameObject() {
   this.position = new Position();
   this.asset = new Image();

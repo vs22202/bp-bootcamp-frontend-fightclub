@@ -71,11 +71,15 @@ h6 {
 /* End of CSS reset */
 
 /* Styling for game */
+body {
+  height: 100vh;
+  width: 100vw;
+}
 
 #UI {
   position: absolute;
-  height: 100vh;
-  width: 100vw;
+  left: 7%;
+  width: 90vw;
 }
 
 #UI #playButton {

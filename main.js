@@ -1,4 +1,3 @@
-
 /* 
   Author : Vishaal Sowrirajan
 
@@ -79,7 +78,6 @@ document.addEventListener("keyup", (event) => {
   keyboardState[event.key] = false;
 });
 
-
 // Screen setup
 
 // Start screen setup
@@ -132,11 +130,15 @@ const setupGameStage = (ctx) => {
   canvasState.currentFrame = (canvasState.currentFrame + 1) % 60;
 
   // handle gravity
-  gameState.players[0].movePlayer("gravity",gameState.players[1]);
-  gameState.players[1].movePlayer("gravity",gameState.players[0]);
+  gameState.players[0].movePlayer("gravity", gameState.players[1]);
+  gameState.players[1].movePlayer("gravity", gameState.players[0]);
 
   if (gameState.checkRoundOver()) {
     gameState.isGameOver = true;
+  }
+  if (gameState.isOnlineMultiplayer) {
+    sendPosition();
+    sendHp();
   }
 };
 
@@ -167,6 +169,20 @@ const gameLoop = (timestamp) => {
 };
 
 loadAllImageAssets().then(() => {
-  gameState.addUIElements();
+  if (gameState.isOnlineMultiplayer === undefined) {
+    gameState.addSelectModeUI();
+  } else if (gameState.isOnlineMultiplayer) {
+    if (gameState.user.isLoggedIn) {
+      if (gameState.isOpponentReady) {
+        gameState.addUIElements();
+      } else {
+        gameState.addMatchOpponentUI();
+      }
+    } else {
+      gameState.addLoginUI();
+    }
+  } else {
+    gameState.addUIElements();
+  }
   requestAnimationFrame(gameLoop);
 });
